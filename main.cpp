@@ -462,7 +462,7 @@ int main(int argc, char* argv[]) {
             cout << "USAGE:\n"
                     "   BPCS [-w (write)] [target file] [complexity threshold] [block height] [significance cap] [text to store]\n"
                     "        [-s (read)]  [target file] [complexity threshold] [block height]\n"
-                    "        [-t (read text file)] [target file] [text file] [complexity threshold] [block height] [significance cap]" ;
+                    "        [-t (write text file)] [target file] [text file] [complexity threshold] [block height] [significance cap]" ;
             return 2;
         }
         case 5:
