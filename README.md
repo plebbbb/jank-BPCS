@@ -9,7 +9,7 @@ LSB is an implementation where you store the data on the lowest bit of each byte
 
 BPCS improves upon this by determining the noiseiness of specific portions of the file, and then avoiding those which are too uniform. The written data is also obfuscated to make it noisy if it isn't noisy enough. At higher bits, this reduces the observable changes relative to LSB.
 
-Below, 100KB of lorem ipsum text was written to the image:
+Below, 100KB of lorem ipsum text was written to the an 291KB image file. Values under 100kb indicate running out of available blocks:
 
 | Original | 100KB LSB | 85KB BPCS 8 x 2 pixel 0.3A | 94KB BPCS 8 x 16 pixel 0.3A |
 |---|---|---|---|
