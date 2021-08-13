@@ -123,7 +123,7 @@ struct BMP{
                                         iter_length = char_arr_to_int(HB, 4);
                                         iter_length2 = ceil((float)iter_length/(float)block_height);
                                         iter_length3 = iter_length2;
-                                       // cout << iter_length << "\nI2: " << iter_length2;
+                                        cout << iter_length << "\nI2: " << iter_length2;
                                         FLIPYN = new bool[iter_length3];
                                         output.arr = new char[iter_length];
                                         output.size = iter_length;
@@ -174,16 +174,19 @@ struct BMP{
         int block_height_amount = (int)floor(((double)HEIGHT)/((double)block_height));
         int block_width_amount = (int)floor((double)WIDTH / 8.f); // width amount of pixels(1 bit per pixel)/8 bits per read block
       //  cout << block_height_amount << " " << block_width_amount;
-        int HeadBlockerSize = ceil((4.f + ceil((float)content_size / 8.f))/(float)block_height);
-        int HBcheck = HeadBlockerSize;
+        unsigned int HeadBlockerSize = ceil((4.f + ceil((double)content_size / 8.f))/(double)block_height);
+        //cout << HeadBlockerSize;
+        unsigned int HBcheck = HeadBlockerSize;
         unsigned int ** Header_PTR_ARR = new unsigned int*[HeadBlockerSize];
         unsigned int content_ind = 0;
         uint8_t * evaluator = new uint8_t[2];
-        int arrsz = HeadBlockerSize*block_height; //amount of blocks * amount of bytes per block
+        //cout << block_height * HeadBlockerSize << " " << HeadBlockerSize << " " << block_height<< " ";
+        unsigned int arrsz = HeadBlockerSize * block_height; //amount of blocks * amount of bytes per block
         char* RV = new char[arrsz];
         for(int a = 0; a < 4; a++){
             RV[a] = ((content_size >> (a*8)) & 0xFF); //mask last 8 bits, rightshift by a*8 bits
         }
+        //int ctr = 0;
         int ctr_A_byte = 0;
         int ctr_A_bit = 0;
         bool HB_BLOCK_ENB = false;
@@ -231,7 +234,7 @@ struct BMP{
                                         randgenarr[m] = (char)(rand()%256); //replacement of empty blocks with random data
                                     }
                                     for(int ie = 0; ie < block_height; ie++){
-                                        cout << randgenarr[ie];
+                                  //      cout << randgenarr[ie];
                                     }
                                     int flipbit = 0;
                                     if(get_a_factor((uint8_t*)randgenarr, block_height) < a_threshold){
@@ -253,10 +256,11 @@ struct BMP{
                                //     cout << "\nNORM";
                                     int flipbit = 0;
                                     for(int ie = 0; ie < block_height; ie++){
-                                        cout << content[content_ind+ie];
+                                   //     cout << content[content_ind+ie];
                                     }
+                                  //  cout << get_a_factor((uint8_t*)&content[content_ind], block_height);
                                     if(get_a_factor((uint8_t*)&content[content_ind], block_height) < a_threshold){
-                                  //      cout << "FLP";
+                                       // cout << "FLP";
                                         pattern_convert((uint8_t*)&content[content_ind], block_height); //written data failed a check - invert to exceed threshold
                                         flipbit = 1;
                                     }
@@ -279,12 +283,14 @@ struct BMP{
         }
         done:
         //cout << "\nOUT";
+        //cout << arrsz/8;
         int ctr = 0;
         for (int d = 4 + (int)ceil((float)content_size / 8.f); d < arrsz; d++){
            // RV[d] = rand() % 256; //fill remaining block space with noise
         }
+       // cout << FILE.fail();
         for(int i = 0; i < arrsz; i++){
-           // cout << std::bitset<8>(RV[i]) << "\n";
+            cout << std::bitset<8>(RV[i]) << "\n";
         }
        // cout << "\n";
        // cout << "\n";
