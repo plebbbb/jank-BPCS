@@ -42,6 +42,15 @@ The same 100KB lorem ipsum text was used on the same 291KB file. This time, we w
 |---|---| ---|
 | ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/original_image.bmp) | ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/94kb_16pxh_0.3A.bmp) | ![alt_text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/100kb_16pxh_D0.05A_W0.045A.bmp) |
 
+## Update 2
+Added the option to have the read A factor change based on a linear function. This improves our visual quality when nearing capacity limits. Our artifact ridden 8x2 pixel config has had its noise level greatly reduced, even when completely filled. The obvious line splitting the 100KB image is caused by the line-by-line writing algo currently employed, which is going to have to be changed to something which distributes writes more evenly.
+
+A 150KB and a 100KB file were tested: 
+
+| 85KB BPCS 8 x 2 pixel 0.3A  | 100KB BPCS 8 x 2 pixel 0.05 -> 0.65A(read) 0.65A(write) | 106KB BPCS 8 x 2 pixel 0.05 -> 0.65A(read) 0.65A(write) |
+|---|---| ---|
+| ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/85kb_2pxh_0.3A.bmp) | ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/100kb_LAF_2pxh_W0.65A.bmp) | ![alt_text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/106kb_LAF_2pxh_W0.65A.bmp) |
+
 
 ## How to use
 Go to the [releases page](https://github.com/plebbbb/jank-BPCS/releases) and download, then run it using a command line.
@@ -53,6 +62,8 @@ Go to the [releases page](https://github.com/plebbbb/jank-BPCS/releases) and dow
   - [x] Seperate Read/Write A factors
   
   - [ ] Add different A factors for each layer
+  
+- [ ] Add some sort of read/write block distribution algo instead of writing line by line 
   
 - [ ] Support more file formats
 
