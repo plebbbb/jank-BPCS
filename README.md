@@ -29,9 +29,9 @@ At lower sizes, the result becomes much more accceptable:
 
 To get a better idea of what steganography actually looks like, this is 100KB of lorem ipsum on a white background, with no threshold, and starting from the 2nd most significant bit:
 
-| 100KB LSB | 100KB BPCS 8 x 6 pixel -0.1A (no obfuscation) |
-|---|---|
-| ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/LSB_100kb_WB.bmp) | ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/BPCS_6px_-0.1A_WB.bmp) |
+| 100KB LSB | 100KB BPCS 8 x 6 pixel -0.1A (no obfuscation) | 100KB BPCS 8 x 6 pixel 0.7A |
+|---|---|---|
+| ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/LSB_100kb_WB.bmp) | ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/BPCS_6px_-0.1A_WB.bmp) | ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/BPCS_6px_0.7A_WB.bmp) |
 
 
 ## How to use
