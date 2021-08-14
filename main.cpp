@@ -188,7 +188,6 @@ struct BMP{
                 }
             }
         }
-      //  cout <<"HERE";
         return output;
     }
 
@@ -325,45 +324,49 @@ struct BMP{
             //    cout << std::bitset<8>(RV[i]) << "\n";
             }
         }
+
+        if ((content_size - content_ind) != 0) cout << "Insufficient space. " << content_ind << " bytes out of " << content_size << " were written.";
+
     }
 
-    void write_BPCS(lineqn a_threshold, int block_height, char * content, int content_size, int digit_limit, float wr_data_threshold){
-        int block_height_amount = (int)floor(((double)HEIGHT)/((double)block_height));
-        int block_width_amount = (int)floor((double)WIDTH / 8.f); // width amount of pixels(1 bit per pixel)/8 bits per read block
+    void write_BPCS(lineqn a_threshold, int block_height, char * content, int content_size, int digit_limit, float wr_data_threshold) {
+        int block_height_amount = (int) floor(((double) HEIGHT) / ((double) block_height));
+        int block_width_amount = (int) floor(
+                (double) WIDTH / 8.f); // width amount of pixels(1 bit per pixel)/8 bits per read block
         //  cout << block_height_amount << " " << block_width_amount;
-        unsigned int HeadBlockerSize = ceil((4.f + ceil((double)content_size / 8.f))/(double)block_height);
+        unsigned int HeadBlockerSize = ceil((4.f + ceil((double) content_size / 8.f)) / (double) block_height);
         //cout << HeadBlockerSize;
         unsigned int HBcheck = HeadBlockerSize;
-        unsigned int ** Header_PTR_ARR = new unsigned int*[HeadBlockerSize];
+        unsigned int **Header_PTR_ARR = new unsigned int *[HeadBlockerSize];
         unsigned int content_ind = 0;
-        uint8_t * evaluator = new uint8_t[2];
+        uint8_t *evaluator = new uint8_t[2];
         //cout << block_height * HeadBlockerSize << " " << HeadBlockerSize << " " << block_height<< " ";
         unsigned int arrsz = HeadBlockerSize * block_height; //amount of blocks * amount of bytes per block
-        char* RV = new char[arrsz];
-        for(int a = 0; a < 4; a++){
-            RV[a] = ((content_size >> (a*8)) & 0xFF); //mask last 8 bits, rightshift by a*8 bits
+        char *RV = new char[arrsz];
+        for (int a = 0; a < 4; a++) {
+            RV[a] = ((content_size >> (a * 8)) & 0xFF); //mask last 8 bits, rightshift by a*8 bits
         }
         //int ctr = 0;
         int ctr_A_byte = 0;
         int ctr_A_bit = 0;
         bool HB_BLOCK_ENB = false;
 
-        for (int L = 6; L < digit_limit; L++) { //bit significance iteration, up to a significance limit
+        for (int L = 0; L < digit_limit; L++) { //bit significance iteration, up to a significance limit
             //    L = 7;
             // cout<< "T";
-            for (int k = 0; k < BIT_PER_PIXEL/8; k++) { //iteration of selected color spectrum
+            for (int k = 0; k < BIT_PER_PIXEL / 8; k++) { //iteration of selected color spectrum
                 //cout<< "e";
 
                 for (int i = 0; i < block_height_amount; i++) {
                     // cout<< "Tf";
 
                     for (int j = 0; j < block_width_amount; j++) {
-                        uint8_t * tmpdel = evaluator;
+                        uint8_t *tmpdel = evaluator;
                         evaluator = get_pixel8_block(block_height, j * 8, i * block_height, k, L);
                         delete[] tmpdel;
                         float v = get_a_factor(evaluator, block_height);
                         //cout << "\nWBPCS: " << v;
-                        if (HB_BLOCK_ENB && HBcheck > 0){
+                        if (HB_BLOCK_ENB && HBcheck > 0) {
                             int addr = HeadBlockerSize - HBcheck;
                             Header_PTR_ARR[addr] = new unsigned int[4];
                             Header_PTR_ARR[addr][0] = j * 8;
@@ -382,55 +385,62 @@ struct BMP{
                                 continue; //continue to next block
                             } else {
                                 //    cout << "\n" <<(content_size - content_ind) << "\n";
-                                if(ctr_A_bit == 0) RV[4 + ctr_A_byte] = (uint8_t)(rand() % 256);
-                                if ((content_size - content_ind) < block_height) { //insufficient data left for block: generate random noise in remaining space
+                                if (ctr_A_bit == 0) RV[4 + ctr_A_byte] = (uint8_t) (rand() % 256);
+                                if ((content_size - content_ind) <
+                                    block_height) { //insufficient data left for block: generate random noise in remaining space
                                     //     cout << "\nRGR";
                                     char *randgenarr = new char[block_height];
                                     memcpy(randgenarr, &content[content_ind], content_size - content_ind);
-                                    for(int m = (content_size - content_ind); m < block_height; m++){
-                                        randgenarr[m] = (char)(rand()%256); //replacement of empty blocks with random data
+                                    for (int m = (content_size - content_ind); m < block_height; m++) {
+                                        randgenarr[m] = (char) (rand() %
+                                                                256); //replacement of empty blocks with random data
                                     }
-                                    for(int ie = 0; ie < block_height; ie++){
+                                    for (int ie = 0; ie < block_height; ie++) {
                                         //     cout << randgenarr[ie];
                                     }
                                     int flipbit = 0;
-                                    if(get_a_factor((uint8_t*)randgenarr, block_height) < wr_data_threshold){
-                                        pattern_convert((uint8_t*)randgenarr, block_height); //written data failed a check - invert to exceed threshold
+                                    if (get_a_factor((uint8_t *) randgenarr, block_height) < wr_data_threshold) {
+                                        pattern_convert((uint8_t *) randgenarr,
+                                                        block_height); //written data failed a check - invert to exceed threshold
                                         flipbit = 1;
                                         //           cout << "FLP";
                                     }
                                     RV[4 + ctr_A_byte] = place_bit(RV[4 + ctr_A_byte], ctr_A_bit, flipbit);
                                     //     cout << "\n FB: " << flipbit << "  " << bitset<8> (RV[4 + ctr_A_byte]) << "\n";
                                     ctr_A_bit++;
-                                    if(ctr_A_bit == 8){
+                                    if (ctr_A_bit == 8) {
                                         ctr_A_bit = 0;
                                         ctr_A_byte++;
                                     }
-                                    write_pixel8_block(block_height,j * 8,i * block_height,k, L, randgenarr); //write to block
+                                    write_pixel8_block(block_height, j * 8, i * block_height, k, L,
+                                                       randgenarr); //write to block
                                     delete[] randgenarr;
                                     goto done;
                                 } else {
                                     //     cout << "\nNORM";
                                     int flipbit = 0;
-                                    for(int ie = 0; ie < block_height; ie++){
+                                    for (int ie = 0; ie < block_height; ie++) {
                                         //       cout << content[content_ind+ie];
                                     }
                                     //  cout << get_a_factor((uint8_t*)&content[content_ind], block_height);
-                                    if(get_a_factor((uint8_t*)&content[content_ind], block_height) < wr_data_threshold){
+                                    if (get_a_factor((uint8_t *) &content[content_ind], block_height) <
+                                        wr_data_threshold) {
                                         // cout << "FLP";
-                                        pattern_convert((uint8_t*)&content[content_ind], block_height); //written data failed a check - invert to exceed threshold
+                                        pattern_convert((uint8_t *) &content[content_ind],
+                                                        block_height); //written data failed a check - invert to exceed threshold
                                         flipbit = 1;
                                     }
                                     RV[4 + ctr_A_byte] = place_bit(RV[4 + ctr_A_byte], ctr_A_bit, flipbit);
                                     //cout << "\n FB: " << flipbit << "  " << bitset<8> (RV[4 + ctr_A_byte]) << "\n";
                                     ctr_A_bit++;
-                                    if(ctr_A_bit == 8){
+                                    if (ctr_A_bit == 8) {
                                         ctr_A_bit = 0;
                                         ctr_A_byte++;
                                     }
-                                    write_pixel8_block(block_height,j * 8,i * block_height,k, L, &content[content_ind]); //write to block
+                                    write_pixel8_block(block_height, j * 8, i * block_height, k, L,
+                                                       &content[content_ind]); //write to block
                                     content_ind += block_height;
-                                    if((content_size - content_ind) == 0) goto done;
+                                    if ((content_size - content_ind) == 0) goto done;
                                 }
                             }
                         }
@@ -442,28 +452,33 @@ struct BMP{
         //cout << "\nOUT";
         //cout << arrsz/8;
         int ctr = 0;
-        for (int d = 4 + (int)ceil((float)content_size / 8.f); d < arrsz; d++){
+        for (int d = 4 + (int) ceil((float) content_size / 8.f); d < arrsz; d++) {
             // RV[d] = rand() % 256; //fill remaining block space with noise
         }
         // cout << FILE.fail();
-        for(int i = 0; i < arrsz; i++){
+        for (int i = 0; i < arrsz; i++) {
             //    cout << std::bitset<8>(RV[i]) << "\n";
         }
         // cout << "\n";
         // cout << "\n";
 
-        for(int c = 0; c < arrsz/block_height; c++){
-            write_pixel8_block(block_height, Header_PTR_ARR[c][0], Header_PTR_ARR[c][1], Header_PTR_ARR[c][2], Header_PTR_ARR[c][3], &RV[c*block_height]);
+        for (int c = 0; c < arrsz / block_height; c++) {
+            write_pixel8_block(block_height, Header_PTR_ARR[c][0], Header_PTR_ARR[c][1], Header_PTR_ARR[c][2],
+                               Header_PTR_ARR[c][3], &RV[c * block_height]);
             //     cout << Header_PTR_ARR[c][0] << " " << Header_PTR_ARR[c][1] << "\n";
             //    cout << "\n";
-            for(int i = c*block_height; i < arrsz; i++){
+            for (int i = c * block_height; i < arrsz; i++) {
                 //    cout << std::bitset<8>(RV[i]) << "\n";
             }
         }
+
+        if ((content_size - content_ind) != 0)
+            cout << "Insufficient space. " << content_ind << " bytes out of " << content_size << " were written.";
+
     }
 
 
-    unsigned int char_arr_to_int(char arr[], int length){
+        unsigned int char_arr_to_int(char arr[], int length){
         unsigned int output = 0;
         for(int i = 0; i < length; i++){
             for(int j = 0; j < 8; j++){
@@ -618,11 +633,13 @@ int main(int argc, char* argv[]) {
             cout << "USAGE:\n"
                     "   BPCS [-w (write)] [target file] [complexity threshold] [block height] [significance cap] [text to store]\n"
                     "        [-s (read)]  [target file] [header complexity threshold] [data complexity threshold] [block height]\n"
-                    "        [-t (write text file)] [target file] [text file] [source complexity threshold] [written complexity threshold] [block height] [significance cap]" ;
+                    "        [-t (write text file)] [target file] [text file] [source complexity threshold] [written complexity threshold] [block height] [significance cap]\n"
+                    "        [-l (write text file, linear)] [target file] [text file] [source complexity init threshold] [source complexity end threshold] [written complexity threshold] [block height] [significance cap]\" ;" ;
             return 2;
         }
         case 6:
         case 8:
+        case 9:
         BMP a((string)string(argv[2]));
         switch (argv[1][1]) {
             case 'w':
@@ -654,7 +671,26 @@ int main(int argc, char* argv[]) {
                 input.read(data,fsize);
                 a.write_BPCS(atof(argv[4]), atoi(argv[6]), data, fsize, atoi(argv[7]), atof(argv[5]));
                 return 1;
-            }        }
+            }
+            case 'l':
+            {
+                ifstream input;
+                input.open(string(argv[3]), ios::binary);
+                if(!input.is_open()){
+                    cout << "\nNO TEXT FILE";
+                    return 2;
+                }
+                char* data;
+                unsigned int fsize = input.tellg();
+                input.seekg( 0, ios::end );
+                fsize = (unsigned int)input.tellg() - fsize;
+                input.seekg(0,ios::beg);
+                data = new char [fsize];
+                input.read(data,fsize);
+                a.write_BPCS(lineqn(atoi(argv[8]), atof(argv[4]), atof(argv[5])), atoi(argv[7]), data, fsize, atoi(argv[8]), atof(argv[6]));
+                return 1;
+            }
+        }
     }
 
  }//*/
