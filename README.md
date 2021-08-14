@@ -33,10 +33,29 @@ To get a better idea of what steganography actually looks like, this is 100KB of
 |---|---|---|
 | ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/LSB_100kb_WB.bmp) | ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/BPCS_6px_-0.1A_WB.bmp) | ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/BPCS_6px_0.7A_WB.bmp) |
 
+## Update 1
+Added seperated read and write A factors. While written data generally achieves A factors around the 0.4 range, the highest bits were often left at 0 leading to the banding observed in the 100KB test. Additionally, increased density can be achieved by lowering the read A factor, while keeping visual quality via obsfuscating written data.
+
+The same 100KB lorem ipsum text was used on the same 291KB file. This time, we were able to write all 100KB: 
+
+| Original | 94KB BPCS 8 x 16 pixel 0.3A(r/d) | 100KB BPCS 8 x 16 pixel 0.05A(read) 0.45A(data) |
+|---|---| ---|
+| ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/original_image.bmp) | ![alt text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/94kb_16pxh_0.3A.bmp) | ![alt_text](https://github.com/plebbbb/jank-BPCS/blob/main/Images/100kb_16pxh_D0.05A_W0.045A.bmp) |
+
 
 ## How to use
 Go to the [releases page](https://github.com/plebbbb/jank-BPCS/releases) and download, then run it using a command line.
 
 ## Future improvements
-The current program uses a single constant noiseiness factor for all layers, which is used for both identifying viable blocks and evaluating written data.
-Seperating these out would greatly improve visual quality and increase storage sizes. 
+
+- [ ] Improve application of A factor on image
+
+  - [x] Seperate Read/Write A factors
+  
+  - [ ] Add different A factors for each layer
+  
+- [ ] Support more file formats
+
+  - [ ] PNGs (oh no) 
+
+- [ ] Refactor everything
